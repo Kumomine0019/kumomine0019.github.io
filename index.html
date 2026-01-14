@@ -4,173 +4,363 @@
     <link rel="icon" href="https://media.prts.wiki/b/b4/Logo_%E8%8E%B1%E8%8C%B5%E7%94%9F%E5%91%BD.png" type="image/png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigation Center</title>
+    <title>Rhine Lab | Navigation Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --rhine-orange: #ff6200;
+            --tech-cyan: #00f2ff;
+            --bg-dark: #050505;
+            --panel-bg: rgba(10, 10, 10, 0.8);
+            --border-color: rgba(255, 255, 255, 0.2);
+        }
+
         body {
             margin: 0;
+            padding: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #0f0f0f;
-            font-family: 'Montserrat', Arial, sans-serif;
+            background: var(--bg-dark);
+            font-family: 'Montserrat', sans-serif;
             color: #ffffff;
             overflow: hidden;
         }
+
+        /* 交互背景 Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        /* 扫描线效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
         .container {
-            text-align: center;
-            padding: 60px;
-            background: rgba(20, 20, 20, 0.85);
-            border: 2px solid #ffffff;
-            border-radius: 0;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            max-width: 700px;
             position: relative;
-            z-index: 1;
+            z-index: 10;
+            width: 90%;
+            max-width: 800px;
+            padding: 40px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            /* 未来感切角设计 */
+            clip-path: polygon(
+                0 20px, 20px 0, 
+                calc(100% - 20px) 0, 100% 20px, 
+                100% calc(100% - 20px), calc(100% - 20px) 100%, 
+                20px 100%, 0 calc(100% - 20px)
+            );
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 255, 0.05);
+            text-align: center;
         }
+
+        /* 装饰性HUD边角 */
+        .container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid var(--tech-cyan);
+            clip-path: polygon(0 0, 40px 0, 40px 2px, 2px 2px, 2px 40px, 0 40px);
+            opacity: 0.5;
+        }
+
         .header {
-            background: #1a1a1a;
-            padding: 20px;
-            border-bottom: 2px solid #ff6200;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            position: relative;
         }
+
         h1 {
-            font-size: 36px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 98, 0, 0.5);
+            background: linear-gradient(90deg, #fff, var(--tech-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.5));
         }
+
+        .status-bar {
+            font-size: 12px;
+            color: var(--tech-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
         .nav-list {
             list-style: none;
             padding: 0;
-            margin-bottom: 40px;
-        }
-        .nav-list li {
-            margin: 20px 0;
-            font-size: 20px;
-            opacity: 0.7;
-            transition: all 0.3s ease;
-        }
-        .nav-list li:hover {
-            opacity: 1;
-            transform: translateX(15px);
-            text-shadow: 0 0 8px rgba(255, 98, 0, 0.6);
-        }
-        .nav-links {
+            margin: 0 0 40px 0;
             display: flex;
             justify-content: center;
             gap: 20px;
-            flex-wrap: wrap;
-        }
-        .nav-links a {
-            display: inline-block;
-            padding: 15px 30px;
-            background: #ff6200;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 18px;
+            font-size: 0.9rem;
+            color: var(--rhine-orange);
             font-weight: bold;
-            letter-spacing: 1px;
-            border: 2px solid #ffffff;
-            border-radius: 0;
-            transition: all 0.3s ease;
+        }
+
+        .nav-list li::before {
+            content: "[ ";
+        }
+        .nav-list li::after {
+            content: " ]";
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .nav-item {
             position: relative;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
         }
-        /* 新增：未完成按钮的样式 */
-        .nav-links a.under-construction {
-            background: #555555; /* 灰色背景 */
-            padding: 10px 20px; /* 更小的尺寸 */
-            font-size: 16px; /* 更小的字体 */
-            font-family: 'Futura', 'Century Gothic', sans-serif; /* 更换为Futura字体 */
-        }
-        .nav-links a:hover {
-            background: #e55a00;
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 98, 0, 0.5);
-            border-color: #ff6200;
-        }
-        /* 未完成按钮的hover样式调整 */
-        .nav-links a.under-construction:hover {
-            background: #777777;
-            box-shadow: 0 0 15px rgba(200, 200, 200, 0.5);
-        }
-        .nav-links a::before {
-            content: '';
+
+        .nav-item::before {
+            content: "";
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
             transition: 0.5s;
         }
-        .nav-links a:hover::before {
+
+        .nav-item:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--tech-cyan);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2);
+        }
+
+        .nav-item:hover::before {
             left: 100%;
         }
-        .background-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #ff6200, #1a1a1a, #ff6200);
-            background-size: 400%;
-            z-index: 0;
-            animation: gradientShift 15s ease infinite;
-            opacity: 0.1;
+
+        /* 核心橙色按钮 */
+        .nav-item.primary {
+            border-color: var(--rhine-orange);
+            color: var(--rhine-orange);
         }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .nav-item.primary:hover {
+            background: rgba(255, 98, 0, 0.15);
+            box-shadow: 0 10px 20px rgba(255, 98, 0, 0.2);
         }
+
+        /* 灰度按钮 */
+        .nav-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(50, 50, 50, 0.2);
+        }
+        .nav-item.disabled:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-top: 8px;
+            opacity: 0.6;
+        }
+
         @media (max-width: 600px) {
             .container {
-                padding: 30px;
+                padding: 20px;
             }
             h1 {
-                font-size: 28px;
+                font-size: 1.5rem;
             }
-            .nav-links a {
-                padding: 12px 20px;
-                font-size: 16px;
-            }
-            .nav-links a.under-construction {
-                padding: 8px 16px;
-                font-size: 14px;
+            .nav-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="background-animation"></div>
+    <!-- 交互式背景层 -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- 主容器 -->
     <div class="container">
         <div class="header">
-            <h1>Navigation Center</h1>
+            <h1>-</h1>
+            <div class="status-bar">System Status: Online | Security Level: Alpha</div>
         </div>
+
         <ul class="nav-list">
-            <li>Personal Blog</li>
-            <li>-</li>
-            <li>Under Construction</li>
+            <li>Personal Hub</li>
+            <li>Database</li>
+            <li>v2.5.0</li>
         </ul>
-        <div class="nav-links">
-            <a href="https://kumomine0019.github.io/TestBlog/" target="_blank">SVM Visualized</a>
-            <!-- 为未完成按钮添加类名 -->
-            <a href="#" target="_blank" class="under-construction">Under Construction</a>
-            <a href="#" target="_blank" class="under-construction">Under Construction</a>
-            <a href="#" target="_blank" class="under-construction">Under Construction</a>
+
+        <div class="nav-grid">
+            <!-- 按钮 1: SVM Visualized -->
+            <a href="https://kumomine0019.github.io/TestBlog/" target="_blank" class="nav-item primary">
+                <span>SVM Visualized</span>
+                <span class="btn-tag">Direct Access</span>
+            </a>
+
+            <!-- 按钮 2: TestBlog (现已激活) -->
+            <a href="#" class="nav-item">
+                <span>TestBlog</span>
+                <span class="btn-tag">Local Connection</span>
+            </a>
+
+            <!-- 建设中 -->
+            <a href="#" class="nav-item disabled">
+                <span>Access Denied</span>
+                <span class="btn-tag">Constructing</span>
+            </a>
+
+            <a href="#" class="nav-item disabled">
+                <span>Access Denied</span>
+                <span class="btn-tag">Constructing</span>
+            </a>
         </div>
     </div>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+                this.color = Math.random() > 0.5 ? '#ff6200' : '#00f2ff';
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < mouse.radius) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 10;
+                    }
+                }
+            }
+        }
+
+        function init() {
+            particles = [];
+            const numberOfParticles = (canvas.width * canvas.height) / 9000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+                particles[i].update();
+            }
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        function connect() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = particles[a].color;
+                        ctx.lineWidth = 0.2;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+    </script>
 </body>
-
 </html>
-
-
