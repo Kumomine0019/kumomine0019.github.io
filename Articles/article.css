@@ -1,0 +1,58 @@
+@font-face {
+    font-family: "PixelTerminal";
+    src: url("../fonts/VT323-Regular.ttf") format("truetype");
+}
+
+:root {
+    --bg:    #0a0a0a;
+    --green: #98fb98;
+    --dim:   #2f4f3a;
+    --glow:  0 0 8px rgba(152, 251, 152, .45);
+}
+
+* { box-sizing: border-box; scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--green);
+    font-family: "PixelTerminal", "DengXian Light", "等线 Light", "PingFang SC", sans-serif;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+::selection { background: var(--green); color: var(--bg); }
+
+body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .12) 2px, rgba(0, 0, 0, .12) 3px);
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+a { color: var(--green); }
+
+.my-custom-nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--dim); }
+.nav-container { max-width: 1000px; margin: 0 auto; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.logo { font-size: 20px; font-weight: bold; letter-spacing: 2px; text-decoration: none; color: var(--green); text-shadow: var(--glow); }
+.logo-dot { animation: blink 2s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.nav-links { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.nav-links a { display: block; padding: 4px 12px; color: var(--green); text-decoration: none; border: 1px solid transparent; transition: all 0.2s; }
+.nav-links a:hover { background: var(--green); color: var(--bg); }
+.nav-links a.active { border: 1px dashed var(--green); }
+
+.article-hero { padding: 60px 0 40px; text-align: center; }
+.article-hero h1 { font-size: 42px; letter-spacing: 2px; text-shadow: var(--glow); margin-bottom: 10px; margin: 0 0 5px 0;}
+.article-meta { opacity: .55; font-size: 15px; margin: 0;  padding-top: 0px; padding-bottom: 0px; line-height: 1.2;}
+
+.article-body { padding: 40px 0 60px; }
+.article-content { border: 1px solid var(--dim); padding: 30px; background: rgba(152, 251, 152, .02); }
+.article-content h2 { font-size: 26px; margin-top: 30px; border-bottom: 1px dashed var(--dim); padding-bottom: 8px; }
+.article-content h2::before { content: "// "; }
+.article-content p { margin: 15px 0; }
+.article-content pre { background: rgba(0, 0, 0, .4); padding: 15px; border: 1px solid var(--dim); overflow-x: auto; }
+.article-content code { background: rgba(0, 0, 0, .3); padding: 2px 6px; }
+
+.footer { padding: 30px 0; text-align: center; border-top: 1px dashed var(--dim); font-size: 14px; opacity: .7; }

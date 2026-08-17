@@ -1,0 +1,168 @@
+@font-face {
+   font-family: "PixelTerminal";
+   src: url("fonts/VT323-Regular.ttf") format("truetype");
+}
+
+/* =====================================================
+   1. 全局变量与基础设置 (Global)
+   ===================================================== */
+:root {
+    --bg:    #0a0a0a;
+    --green: #98fb98;
+    --dim:   #2f4f3a;
+    --glow:  0 0 8px rgba(152, 251, 152, .45);
+}
+
+* { box-sizing: border-box; scroll-behavior: smooth; }
+
+html { scroll-behavior: smooth; }
+
+#hero, #articles, #projects { scroll-margin-top: 70px; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--green);
+    /* 像素字体生效！英文走像素风，中文走等线 */
+    font-family: "PixelTerminal", "DengXian Light", "等线 Light", "PingFang SC", sans-serif;
+    font-size: 18px;
+    line-height: 1.7;
+}
+
+::selection { background: var(--green); color: var(--bg); }
+
+/* CRT 扫描线 */
+body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .12) 2px, rgba(0, 0, 0, .12) 3px);
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+a { color: var(--green); }
+
+/* =====================================================
+   2. 导航栏 (Navbar)
+   ===================================================== */
+.my-custom-nav { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 1px solid var(--dim); }
+.nav-container { max-width: 1000px; margin: 0 auto; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.logo { font-size: 30px; font-weight: bold; letter-spacing: 2px; text-decoration: none; color: var(--green); text-shadow: var(--glow); }
+.logo-dot { animation: blink 2s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.nav-links { display: flex; gap: 6px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
+.nav-links a { display: block; padding: 4px 12px; color: var(--green); text-decoration: none; border: 1px solid transparent; transition: all 0.2s; }
+.nav-links a:hover { background: var(--green); color: var(--bg); }
+.nav-links a.active { border: 1px dashed var(--green); }
+
+/* =====================================================
+   3. 头部介绍 (Hero)
+   ===================================================== */
+.hero-section { padding: 80px 0 400px; text-align: center; }
+.hero-section h1 { letter-spacing: 2px; text-shadow: var(--glow); margin-bottom: 10px; font-size: 50px; }
+.subtitle { opacity: .55; margin: 5px 0; }
+
+/* =====================================================
+   4. 主体布局 (Main Layout)
+   ===================================================== */
+.main-layout { padding-top: 20px; padding-bottom: 60px; }
+
+/* =====================================================
+   5. 左侧：卡片样式 (Cards) - 包含极致压扁代码
+   ===================================================== */
+.content-section { padding: 0 0 20px 0; }
+.main-layout .content-section:last-child { padding-bottom: 0; }
+
+.section-title { font-size: 30px; letter-spacing: 2px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px dashed var(--dim); }
+.section-title::before { content: "// "; }
+
+.card-box {
+    display: block; text-decoration: none; color: inherit;
+    padding: 10px 15px; border: 1px solid var(--dim); background: rgba(152, 251, 152, .03);
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.card-box:hover { border-color: var(--green); box-shadow: var(--glow); transform: translateY(-2px); }
+
+/* 👇 找回了压扁卡片内部间距的代码 */
+.card-box h3 { margin-top: 0; margin-bottom: 4px; font-size: 25px; }
+.card-box .date { opacity: .6; font-size: 15px; margin-bottom: 3px; }
+.card-box .desc { font-size: 20px; margin-bottom: 0; }
+
+.project-links { margin-top: 10px; }
+.project-links a { display: inline-block; margin: 0 10px 0 0; padding: 3px 12px; font-size: 14px; border: 1px solid var(--green); text-decoration: none; transition: all 0.2s; }
+.project-links a:hover { background: var(--green); color: var(--bg); }
+
+/* =====================================================
+   6. 右侧：侧边栏 (Sidebar)
+   ===================================================== */
+.sidebar-block { border: 1px solid var(--dim); background: rgba(152, 251, 152, .03); padding: 20px; margin-bottom: 30px; box-shadow: var(--glow); transition: border-color .2s; }
+.sidebar-block:hover { border-color: var(--green); }
+.sidebar-title { font-size: 18px; margin-top: 0; margin-bottom: 15px; border-bottom: 1px dashed var(--dim); padding-bottom: 8px; letter-spacing: 1px; }
+.sidebar-title::before { content: "$ "; }
+.sidebar-block p { margin: 8px 0; font-size: 15px; }
+.contact-list p { margin: 6px 0; }
+
+/* =====================================================
+   7. 页脚 (Footer)
+   ===================================================== */
+.footer { padding: 30px 0; text-align: center; border-top: 1px dashed var(--dim); font-size: 14px; opacity: .7; }
+
+/* =====================================================
+   8. 项目折叠面板专属样式 (Project Accordion)
+   ===================================================== */
+
+/* 让卡片头部看起来可以点击 */
+.project-header {
+    cursor: pointer; /* 鼠标变成小手 */
+    position: relative;
+    margin-bottom: 0; /* 展开时去掉底部间距，和详情框连在一起 */
+}
+
+/* 终端风格的 [+] 和 [-] 切换魔法 */
+.toggle-icon {
+    float: right;
+    color: var(--green);
+    font-weight: bold;
+    letter-spacing: 0;
+}
+.project-header.collapsed .toggle-icon::before { content: "[+]"; }
+.project-header:not(.collapsed) .toggle-icon::before { content: "[-]"; }
+
+/* 展开后的详情框样式 */
+.project-details-box {
+    border: 1px solid var(--green); /* 展开后高亮边框 */
+    border-top: 1px dashed var(--dim); /* 和头部用虚线隔开 */
+    background: rgba(152, 251, 152, .05); /* 稍微亮一点的背景 */
+    padding: 20px;
+    box-shadow: var(--glow);
+    margin-top: -1px; /* 往上贴紧头部 */
+}
+
+/* 详细介绍文字：左侧加个终端引用线 */
+.detail-text {
+    font-size: 15px;
+    margin-bottom: 20px;
+    border-left: 2px solid var(--dim); 
+    padding-left: 12px;
+    color: var(--green);
+    opacity: 0.9;
+}
+
+/* 面板内的按钮样式 */
+.project-links .btn-link-custom {
+    display: inline-block; 
+    margin: 0 10px 0 0;
+    padding: 6px 16px; 
+    font-size: 15px;
+    border: 1px solid var(--green); 
+    text-decoration: none;
+    color: var(--green);
+    background: transparent;
+    transition: all 0.2s;
+}
+
+.project-links .btn-link-custom:hover { 
+    background: var(--green); 
+    color: var(--bg); 
+    box-shadow: var(--glow);
+    text-shadow: none;
+}
